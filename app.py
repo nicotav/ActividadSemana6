@@ -1,4 +1,5 @@
 import ast
+import sys
 
 def translate_python_to_javascript(python_code):
     python_ast = ast.parse(python_code)
@@ -99,41 +100,61 @@ def format_javascript_code(code, example_number, python_code):
     formatted_code = f"Example {example_number}:\n\nPython code:\n{python_code}\n\nTranslated JavaScript code:\n{code}"
     return formatted_code
 
+
+def format_example_code(example_number, python_code, javascript_code):
+    formatted_code = f"===============================\nExample {example_number}:\n\nPython code:\n\n{python_code}\n\nJavaScript code:\n\n{javascript_code}\n"
+    return formatted_code
+
+# Define the example Python code directly in the script
+example_python_code = [
+    """
 # Example 1: Recursive function to calculate the factorial of a number
-python_code1 = """
 def factorial(n):
     if n == 0:
         return 1
     else:
         return n * factorial(n - 1)
+
 result = factorial(5)
-"""
+""",
+    """
 # Example 2: Using a while loop to find the first Fibonacci number greater than 1000
-python_code2 = """
 a, b = 0, 1
 while b <= 1000:
     a, b = b, a + b
-result = b
-"""
 
+result = b
+""",
+    """
 # Example 3: String manipulation
-python_code3 = """
 message = "Hello, World!"
 upper_message = message.upper()
 lower_message = message.lower()
 length = len(message)
 """
-
-# Translate and print the JavaScript code for each example
-examples = [
-    (python_code1, 1),
-    (python_code2, 2),
-    (python_code3, 3),
-    # Add more examples here
 ]
 
-for example_code, example_number in examples:
-    javascript_code = translate_python_to_javascript(example_code)
-    formatted_code = format_javascript_code(javascript_code, example_number, example_code)
+# Verifying if a specific file was provided
+if len(sys.argv) > 1:
+    # Get the file name
+    file_name = sys.argv[1]
+    
+    # Read the content of the file
+    with open(file_name, "r") as file:
+        python_code = file.read()
+
+    # Translate the Python code to JavaScript
+    javascript_code = translate_python_to_javascript(python_code)
+    
+    # Format and print the resulting Python and JavaScript code
+    formatted_code = format_example_code("File", python_code, javascript_code)
     print(formatted_code)
-    print("\n===============================\n")
+else:
+    # Execute all default examples
+    for example_number, python_code in enumerate(example_python_code, start=1):
+        # Translate the Python code to JavaScript
+        javascript_code = translate_python_to_javascript(python_code)
+        
+        # Format and print the resulting Python and JavaScript code
+        formatted_code = format_example_code(example_number, python_code, javascript_code)
+        print(formatted_code)
